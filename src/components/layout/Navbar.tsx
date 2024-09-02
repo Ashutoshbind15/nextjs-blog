@@ -13,6 +13,7 @@ const Navbar = () => {
 
         <SignedIn>
           <UserButton />
+          <Link href={"/dashboard"}>Dashboard</Link>
         </SignedIn>
 
         <SignedOut>

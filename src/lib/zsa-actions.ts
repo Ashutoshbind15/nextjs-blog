@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { createServerActionProcedure, ZSAError } from "zsa";
+import prisma from "./prisma";
 
 export const authActionProcedure = createServerActionProcedure().handler(
   async () => {
@@ -15,11 +16,21 @@ export const authActionProcedure = createServerActionProcedure().handler(
       throw new ZSAError("NOT_AUTHORIZED", "User not found");
     }
 
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        clerkUid: userId,
+      },
+    });
+
+    if (!dbUser) {
+      throw new ZSAError("NOT_AUTHORIZED", "User not found in database");
+    }
+
     return {
       user: {
         email: user?.primaryEmailAddress,
         username: user?.username,
-        id: userId,
+        id: dbUser.id,
       },
     };
   }

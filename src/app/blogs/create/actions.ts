@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { authActionProcedure } from "@/lib/zsa-actions";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { ZSAError } from "zsa";
 
 export const createPostAction = authActionProcedure
   .createServerAction()
@@ -15,25 +16,22 @@ export const createPostAction = authActionProcedure
   )
   .handler(async ({ input, ctx }) => {
     const user = ctx.user;
-    const clerkuid = user.id;
+    const uid = user.id;
 
-    const dbuser = await prisma.user.findUnique({
-      where: {
-        clerkUid: clerkuid,
-      },
-    });
+    // todo: figure out the correct type for post
+    let post;
 
-    if (!dbuser) {
-      throw new Error("User not found");
+    try {
+      post = await prisma.post.create({
+        data: {
+          title: input.title,
+          description: input.description,
+          userId: uid,
+        },
+      });
+    } catch (error) {
+      throw new ZSAError("INTERNAL_SERVER_ERROR", "Failed to create post");
     }
-
-    const post = await prisma.post.create({
-      data: {
-        title: input.title,
-        description: input.description,
-        userId: dbuser.id,
-      },
-    });
 
     revalidatePath("/blogs");
 

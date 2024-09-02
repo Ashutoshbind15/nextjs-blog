@@ -4,10 +4,18 @@ import { Post } from "@prisma/client";
 import Link from "next/link";
 
 const Page = async () => {
-  const posts = await prisma.post.findMany();
+  const posts = await prisma.post.findMany({
+    where: {
+      published: true,
+    },
+  });
 
   return (
     <div>
+      <Button>
+        <Link href="/blogs/create">Create post</Link>
+      </Button>
+
       {posts.map((post: Post) => (
         <div key={post.id}>
           <h2>{post.title}</h2>
