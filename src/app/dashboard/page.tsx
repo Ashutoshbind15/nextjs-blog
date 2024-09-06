@@ -1,10 +1,11 @@
 import prisma from "@/lib/prisma";
-import React from "react";
+import React, { Suspense } from "react";
 import PublishForm from "./edit-and-publish";
 import { validateRequest } from "@/lib/auth/lucia";
-import Userdata from "@/components/auth/userdata";
+import Userdata from "@/components/layout/userdata";
 import LogoutButton from "@/components/auth/Logout";
 import UserFetcher from "@/components/auth/fetcher";
+import AdminData from "./admindata";
 
 const Page = async () => {
   const { user } = await validateRequest();
@@ -31,9 +32,7 @@ const Page = async () => {
 
   return (
     <div>
-      <Userdata>
-        <LogoutButton />
-      </Userdata>
+      <AdminData />
 
       {userPosts.map((post) => (
         <div key={post.id}>
@@ -50,7 +49,9 @@ const Page = async () => {
         </div>
       ))}
 
-      <UserFetcher />
+      <Suspense>
+        <UserFetcher />
+      </Suspense>
     </div>
   );
 };

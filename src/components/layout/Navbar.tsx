@@ -1,7 +1,6 @@
 import Link from "next/link";
-import Userdata from "../auth/userdata";
+import Userdata from "./userdata";
 import LogoutButton from "../auth/Logout";
-import AuthWrapper from "../wrappers/AuthWrapper";
 
 const Navbar = () => {
   return (
@@ -15,9 +14,6 @@ const Navbar = () => {
         <Userdata>
           <LogoutButton />
         </Userdata>
-        <AuthWrapper>
-          <Link href={"/dashboard"}>Dashboard</Link>
-        </AuthWrapper>
       </div>
     </div>
   );

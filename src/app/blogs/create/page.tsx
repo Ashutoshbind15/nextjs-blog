@@ -5,36 +5,44 @@ import { useState } from "react";
 import { useServerAction } from "zsa-react";
 import { createPostAction } from "./actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const BlogCreatorPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const { isPending, execute, data, error } = useServerAction(
-    createPostAction,
-    {
-      onSuccess: () => {
-        toast.success("Post created");
-        setTitle("");
-        setDescription("");
-      },
-      onStart: () => {
-        toast.info("Creating post");
-      },
-      onError: () => {
-        toast.error(`Failed to create post: ${error?.message}`);
-      },
-    }
-  );
+  const router = useRouter();
 
-  // todo: check for the authentication status with a client-side hook
+  const { isPending, execute } = useServerAction(createPostAction, {
+    onStart: () => {
+      toast.info("Creating post");
+    },
+  });
+
+  // todo:done : check for the authentication status with a client-side hook
 
   return (
     <div>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          execute({ title, description });
+          const [data, error] = await execute({ title, description });
+
+          if (error) {
+            const { code, message } = error;
+
+            if (code === "NOT_AUTHORIZED") {
+              toast.error("Not authorized");
+              router.push("/login?redirect=loggedout");
+            } else {
+              toast.error(message);
+            }
+          } else {
+            const post = data.post;
+            toast.success(`Post created: ${post.title}`);
+            setTitle("");
+            setDescription("");
+          }
         }}
       >
         <input

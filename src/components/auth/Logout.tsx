@@ -1,11 +1,16 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { lucia, validateRequest } from "@/lib/auth/lucia";
+import { Button } from "../ui/button";
+import { LogOutIcon } from "lucide-react";
 
 export default async function LogoutButton() {
   return (
     <form action={logout}>
-      <button>Sign out</button>
+      <Button className="flex items-center gap-x-4">
+        <span>Sign out</span>
+        <LogOutIcon />
+      </Button>
     </form>
   );
 }

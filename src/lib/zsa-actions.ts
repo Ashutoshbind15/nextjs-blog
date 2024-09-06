@@ -7,13 +7,13 @@ export const authActionProcedure = createServerActionProcedure().handler(
     const { user } = await validateRequest();
 
     if (!user) {
-      throw new ZSAError("NOT_AUTHORIZED", "User is not authorized");
+      throw new ZSAError("NOT_AUTHORIZED", "Unauthenticated");
     }
 
     const userId = user.id;
 
     if (!userId) {
-      throw new ZSAError("NOT_AUTHORIZED", "User is not authorized");
+      throw new ZSAError("NOT_AUTHORIZED", "Unauthenticated");
     }
 
     const dbUser = await prisma.user.findUnique({
