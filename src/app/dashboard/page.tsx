@@ -1,18 +1,21 @@
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 import React from "react";
 import PublishForm from "./edit-and-publish";
+import { validateRequest } from "@/lib/auth/lucia";
+import Userdata from "@/components/auth/userdata";
+import LogoutButton from "@/components/auth/Logout";
+import UserFetcher from "@/components/auth/fetcher";
 
 const Page = async () => {
-  const { userId } = auth();
+  const { user } = await validateRequest();
 
-  if (!userId) {
-    return <div>Not authenticated</div>;
+  if (!user || !user.id) {
+    return <div>Not authorized</div>;
   }
 
   const dbUser = await prisma.user.findUnique({
     where: {
-      clerkUid: userId,
+      id: user.id,
     },
   });
 
@@ -28,6 +31,10 @@ const Page = async () => {
 
   return (
     <div>
+      <Userdata>
+        <LogoutButton />
+      </Userdata>
+
       {userPosts.map((post) => (
         <div key={post.id}>
           <h2>{post.title}</h2>
@@ -42,6 +49,8 @@ const Page = async () => {
           )}
         </div>
       ))}
+
+      <UserFetcher />
     </div>
   );
 };

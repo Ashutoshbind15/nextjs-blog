@@ -10,7 +10,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
     },
   });
 
-  if (!post) {
+  if (!post || !post.published) {
     return <div>Post not found</div>;
   }
 
@@ -21,5 +21,17 @@ const Page = async ({ params }: { params: { id: string } }) => {
     </div>
   );
 };
+
+export async function generateStaticParams() {
+  const posts = await prisma.post.findMany({
+    where: {
+      published: true,
+    },
+  });
+
+  return posts.map((post) => ({
+    id: post.id,
+  }));
+}
 
 export default Page;

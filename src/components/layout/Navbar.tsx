@@ -1,5 +1,7 @@
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import Userdata from "../auth/userdata";
+import LogoutButton from "../auth/Logout";
+import AuthWrapper from "../wrappers/AuthWrapper";
 
 const Navbar = () => {
   return (
@@ -10,15 +12,12 @@ const Navbar = () => {
 
       <div className="flex items-center gap-x-3">
         <Link href={"/blogs"}>Blogs</Link>
-
-        <SignedIn>
-          <UserButton />
+        <Userdata>
+          <LogoutButton />
+        </Userdata>
+        <AuthWrapper>
           <Link href={"/dashboard"}>Dashboard</Link>
-        </SignedIn>
-
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
+        </AuthWrapper>
       </div>
     </div>
   );

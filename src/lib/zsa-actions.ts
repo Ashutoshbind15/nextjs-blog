@@ -1,24 +1,24 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { createServerActionProcedure, ZSAError } from "zsa";
 import prisma from "./prisma";
+import { validateRequest } from "./auth/lucia";
 
 export const authActionProcedure = createServerActionProcedure().handler(
   async () => {
-    const { userId } = auth();
+    const { user } = await validateRequest();
+
+    if (!user) {
+      throw new ZSAError("NOT_AUTHORIZED", "User is not authorized");
+    }
+
+    const userId = user.id;
 
     if (!userId) {
       throw new ZSAError("NOT_AUTHORIZED", "User is not authorized");
     }
 
-    const user = await currentUser();
-
-    if (!user) {
-      throw new ZSAError("NOT_AUTHORIZED", "User not found");
-    }
-
     const dbUser = await prisma.user.findUnique({
       where: {
-        clerkUid: userId,
+        id: userId,
       },
     });
 
@@ -28,8 +28,8 @@ export const authActionProcedure = createServerActionProcedure().handler(
 
     return {
       user: {
-        email: user?.primaryEmailAddress,
-        username: user?.username,
+        email: dbUser?.email,
+        username: dbUser?.username,
         id: dbUser.id,
       },
     };

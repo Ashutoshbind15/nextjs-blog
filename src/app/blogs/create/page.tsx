@@ -5,10 +5,8 @@ import { useState } from "react";
 import { useServerAction } from "zsa-react";
 import { createPostAction } from "./actions";
 import { toast } from "sonner";
-import { useAuth } from "@clerk/nextjs";
 
 const BlogCreatorPage = () => {
-  const { isSignedIn, isLoaded } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -29,13 +27,7 @@ const BlogCreatorPage = () => {
     }
   );
 
-  if (!isSignedIn) {
-    return <div>Sign in to create a post</div>;
-  }
-
-  if (!isLoaded) {
-    return <div>Loading </div>;
-  }
+  // todo: check for the authentication status with a client-side hook
 
   return (
     <div>
