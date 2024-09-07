@@ -72,7 +72,7 @@ export const updatePostAction = authActionProcedure
       throw new Error("Unauthorized");
     }
 
-    await prisma.post.update({
+    const res = await prisma.post.update({
       where: {
         id: input.id,
       },
@@ -83,4 +83,12 @@ export const updatePostAction = authActionProcedure
     });
 
     revalidatePath("/dashboard");
+
+    return {
+      post: {
+        id: res.id,
+        title: res.title,
+        description: res.description,
+      },
+    };
   });

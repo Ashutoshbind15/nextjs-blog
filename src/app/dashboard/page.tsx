@@ -2,8 +2,6 @@ import prisma from "@/lib/prisma";
 import React, { Suspense } from "react";
 import PublishForm from "./edit-and-publish";
 import { validateRequest } from "@/lib/auth/lucia";
-import Userdata from "@/components/layout/userdata";
-import LogoutButton from "@/components/auth/Logout";
 import UserFetcher from "@/components/auth/fetcher";
 import AdminData from "./admindata";
 
